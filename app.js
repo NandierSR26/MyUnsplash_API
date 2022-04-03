@@ -8,7 +8,20 @@ const app = express();
 
 dbConnection();
 
-app.use(cors());
+// definir un dominio(s) para hacer las peticiones
+const whitelist = [process.env.FRONTEND_URL];
+const corsOptions = {
+    origin: function (origin, callback) {
+        const existe = whitelist.some(dominio => dominio === origin);
+        if (existe) {
+            callback(null, true);
+        } else {
+            callback(new Error('No permitido por CORS'));
+        }
+    }
+}
+
+app.use(cors(corsOptions));
 
 app.use(express.json());
 
